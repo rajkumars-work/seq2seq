@@ -1,0 +1,40 @@
+id: coglib
+
+# Brief description of this component:
+description: Library and command-line tools for the Cogs (Contextual Generator Seq-to-seq system 
+
+# The system this component belongs to:
+system: coglib
+
+# Main owner of this component (LDAP group or individual):
+owner: rkumar
+
+# Intended usage of this component:
+#   'private' - only for use by the owner
+#   'public'  - exposes an api for other squads (like metadata)
+# Components that are under development, experimental, not
+# supported, replaced, liable to change without warning, etc.
+# should generally be marked as private.
+visibility: public
+
+# A list of other components (services, data stores, etc.) on which
+# this component depends. Must be valid service_discovery names
+# registered in the Nameless service.
+dependencies: []
+
+facts:
+  component_type: library
+
+  # Name of the slack channel that users should use to get support.
+  slack_channel: rkumar
+
+  # Email that users should use to get support.
+  support_email: rkumar@spotify.com
+
+  # Lifecycle is a new experimental feature
+  # we prefer one of: experimental, production, deprecated, removed
+  lifecycle: experimental
+
+  tags: ['python']
+
+  library_name: coglib

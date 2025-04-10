@@ -1,0 +1,33 @@
+# uses beam 2.52.0
+FROM apache/beam_python3.10_sdk
+
+# tensorflow
+RUN python3 -m pip install tensorflow tensorflow-datasets
+RUN python3 -m pip install google.cloud.bigquery_storage google-cloud-bigquery google-cloud-storage
+RUN python3 -m pip install fastavro more-itertools importlib-resources etils dnspython
+RUN python3 -m pip install mwparserfromhell
+
+# sentencepiece
+RUN apt-get update && apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev
+RUN git clone https://github.com/google/sentencepiece.git \
+  && cd sentencepiece \
+  && mkdir build \
+  && cd build \
+  &&  cmake .. -DSPM_ENABLE_SHARED=OFF -DCMAKE_INSTALL_PREFIX=./root \
+  && make install \
+  && cd ../python \
+  &&  python setup.py bdist_wheel \
+  &&  pip install dist/sentencepiece*.whl
+
+# Check
+# RUN python3 -m pip check
+
+RUN apt install -y vim
+
+# copy over our project and install (not strictly needed)
+WORKDIR /root
+COPY . /root/coglib
+RUN cd /root/coglib && python3 -m pip install -e .
+
+
+# docker run -i -t --entrypoint /bin/bash --gpus all gcr.io/ml-sketchbook/cogs/beam:latest

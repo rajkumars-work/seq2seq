@@ -1,0 +1,35 @@
+FROM us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-3.py310:latest
+# FROM us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.1-13.py310:latest
+
+# torch
+# RUN python3 -m pip install torch~=2.3.0 torchtext -f https://storage.googleapis.com/libtpu-releases/index.html
+RUN python3 -m pip install torchtext pynvml
+RUN python3 -m pip install oauth2client
+RUN python3 -m pip install google.cloud.bigquery_storage google-cloud-bigquery google-cloud-storage
+RUN python3 -m pip install fastavro more-itertools importlib-resources dnspython gcsfs
+RUN python3 -m pip install hnswlib sqlitedict
+RUN python3 -m pip install transformers evaluate datasets
+
+# sentencepiece
+RUN apt-get update && apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev
+RUN git clone https://github.com/google/sentencepiece.git \
+  && cd sentencepiece \
+  && mkdir build \
+  && cd build \
+  &&  cmake .. -DSPM_ENABLE_SHARED=OFF -DCMAKE_INSTALL_PREFIX=./root \
+  && make install \
+  && cd ../python \
+  &&  python setup.py bdist_wheel \
+  &&  pip install dist/sentencepiece*.whl
+
+# Check
+# RUN python3 -m pip check
+
+# copy over our project
+WORKDIR /root
+COPY src/coglib /root/coglib
+
+# set entrypoint and args (can be overriden)
+ENTRYPOINT ["python3"]
+
+# docker run -i -t --entrypoint /bin/bash --gpus all gcr.io/ml-sketchbook/cogs/gpu_torch:latest

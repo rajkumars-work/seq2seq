@@ -1,0 +1,80 @@
+syntax = "proto3";
+package spotify.usertrackplays.v0;
+
+import "google/protobuf/timestamp.proto";
+
+// The user-track-plays request
+message UserTrackPlaysRequest {
+        // the types of querys to perform
+        enum QueryType {
+           TRACK_PLAYS =   0;
+           TRACK_SKIPS =   1;
+           EPISODE_PLAYS = 2;
+           EPISODE_SKIPS = 3;
+           CHAPTER_PLAYS = 4;
+           CHAPTER_SKIPS = 5;
+        };
+
+        // what queries are we going to perform
+        repeated QueryType query_type = 1;
+
+        // list of play context types to filter on
+        repeated string play_context_types = 2;
+
+        // list of play contexts to to filter on
+        repeated string play_contexts = 3;
+
+        // list of uris to filter on
+        repeated string uris = 4;
+
+        // max number of entries to return
+        int32 limit = 7;
+
+        // media type to filter on
+        string media_type = 8;
+
+        // should we convert tracks to their canonical track ids, assumed false
+        bool canonical_tracks = 9;
+
+        // response protobuf mask
+        string field_mask = 10;
+
+        // partial match for play context
+        bool play_context_partial_match = 11;
+
+        string user_id = 12;
+        string user_name = 13;
+
+        // should we include plays from contexts ignored by the user
+        // default: false
+        bool include_iir = 14;
+}
+
+
+message TrackEpisodePlaysAndSkips {
+    TrackPlaysAndSkips track_plays_skips = 1;
+}
+
+message TrackPlaysAndSkips {
+    TrackPlays track_plays = 1;
+    TrackPlays track_skips = 2;
+}
+
+message TrackPlay {
+    string track_uri = 1;
+    string main_artist_uri = 2;
+    google.protobuf.Timestamp timestamp = 6;
+    string play_context = 7;
+    int64 ms_played = 8;
+    string provider = 10;
+}
+
+message TrackPlays {
+    repeated TrackPlay track_plays = 1;
+}
+
+
+// The user-track-plays service
+service UserTrackPlaysService {
+    rpc get(UserTrackPlaysRequest) returns (TrackEpisodePlaysAndSkips) {}
+}

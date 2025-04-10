@@ -1,0 +1,9 @@
+Unk = "[UNK]"
+Pad = "[PAD]"
+Start = "[START]"
+End = "[END]"
+UNK_IDX, PAD_IDX, BOS_IDX, EOS_IDX = 0, 1, 2, 3
+ReservedTokens = ["[UNK]", "[PAD]", "[START]", "[END]"]
+Remove_tokens = ["[PAD]", "[START]", "[END]"]
+Max_len = 16000
+Pad_index = 1

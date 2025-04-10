@@ -1,0 +1,28 @@
+FROM us-docker.pkg.dev/vertex-ai/training/tf-tpu.2-15.cp310:latest
+# FROM us-docker.pkg.dev/vertex-ai/training/tf-tpu.2-12:latest
+
+# sentencepiece
+RUN apt-get update && apt-get -y install cmake build-essential pkg-config libgoogle-perftools-dev
+RUN git clone https://github.com/google/sentencepiece.git \
+  && cd sentencepiece \
+  && mkdir build \
+  && cd build \
+  &&  cmake .. -DSPM_ENABLE_SHARED=OFF -DCMAKE_INSTALL_PREFIX=./root \
+  && make install
+RUN cd sentencepiece/python && python3 setup.py bdist_wheel
+RUN cd sentencepiece/python && python3 -m pip install dist/sentencepiece*.whl
+
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install fastavro more_itertools dnspython
+RUN python3 -m pip install oauth2client
+RUN python3 -m pip install gcsfs
+RUN python3 -m pip install google.cloud.bigquery_storage google-cloud-bigquery google-cloud-storage
+
+# copy over our project
+WORKDIR /root
+COPY src/coglib /root/coglib
+
+# set entrypoint and args (can be overriden)
+ENTRYPOINT ["python3"]
+
+# docker run -i -t --entrypoint /bin/bash --gpus all gcr.io/ml-sketchbook/cogs/tpu:latest
